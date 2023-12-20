@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .chat-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .message {
+    padding: 10px;
+    margin: 5px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    display: block;
+    max-width: 80%;
+  }
+  .mine {
+    background-color: theme("colors.secondary.100");
+    margin-left: auto;
+  }
+  .yours {
+    background-color: #ffffff;
+  }
+}
