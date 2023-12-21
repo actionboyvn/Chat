@@ -57,4 +57,4 @@ jobs:
         with:
           app-name: 'baymaxapp'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_975399d468d8458b8e751cc86ed05dc8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1CA42793A8D94DA4B502E69B04D58EED }}
