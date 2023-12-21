@@ -3,13 +3,12 @@ import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
 
-const message = "Hi Gosia!";
+const helloMessage = "Hi Gosia!";
 const writerSpeed = 40;
 const exampleMessage =
   "A vector database, in the context of computer science and data management, is a type of database designed specifically for handling vector data. Vector data is typically used in applications involving machine learning, artificial intelligence, and similar fields. It is important to understand the nature of vector data to appreciate the role and functionality of a vector database.";
 
 const ChatInterface = () => {
-  const [helloMessage, setHelloMessage] = useState(message);
   const [userQuery, setUserQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

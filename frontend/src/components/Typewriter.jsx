@@ -5,15 +5,13 @@ const Typewriter = ({ text, delay, setIsWriting }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (text[currentIndex] !== " ") {
-      delay = 0;
-    }
+    let adjustedDelay = text[currentIndex] !== " " ? 0 : delay;
     if (currentIndex < text.length) {
       setIsWriting(true);
       const timeout = setTimeout(() => {
         setCurrentText((prevText) => prevText + text[currentIndex]);
         setCurrentIndex((prevIndex) => prevIndex + 1);
-      }, delay);
+      }, adjustedDelay);
 
       return () => {
         clearTimeout(timeout);
