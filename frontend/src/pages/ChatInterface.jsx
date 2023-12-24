@@ -2,11 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
+import { getResponse } from "../utils/Services/getResponse";
 
 const helloMessage = "Hi Gosia!";
 const writerSpeed = 40;
-const exampleMessage =
-  "A vector database, in the context of computer science and data management, is a type of database designed specifically for handling vector data. Vector data is typically used in applications involving machine learning, artificial intelligence, and similar fields. It is important to understand the nature of vector data to appreciate the role and functionality of a vector database.";
 
 const ChatInterface = () => {
   const [userQuery, setUserQuery] = useState("");
@@ -64,24 +63,34 @@ const ChatInterface = () => {
         },
         {
           role: "assistant",
-          content: "I don't know",
+          content: "",
         },
       ]);
+
       setIsLoading(true);
       setTimeout(() => {
-        setIsLoading(false);
-        setMessages([
+        getResponse([
           ...messages,
           {
             role: "user",
             content: q || userQuery,
           },
-          {
-            role: "assistant",
-            content: "I don't know",
-          },
-        ]);
+        ]).then((result) => {
+          setIsLoading(false);
+          setMessages([
+            ...messages,
+            {
+              role: "user",
+              content: q || userQuery,
+            },
+            {
+              role: "assistant",
+              content: result.response,
+            },
+          ]);
+        });
       }, 2000);
+
       setTimeout(() => {
         forceScrollToBottom();
         resizeTextarea();
@@ -107,7 +116,7 @@ const ChatInterface = () => {
 
   return (
     <div className="bg-white h-lvh">
-      <div className="relative bg-background-color h-full w-full md:w-5/6 lg:w-1/2 mx-auto">
+      <div className="relative bg-background-color h-full w-full md:w-2/3 lg:w-1/2 mx-auto">
         <div className="flex px-2 h-[10vh] w-full bg-primary-600 text-white">
           <div className="flex items-center">
             <img
@@ -168,7 +177,7 @@ const ChatInterface = () => {
                       <div>
                         <Typewriter
                           delay={writerSpeed}
-                          text={exampleMessage}
+                          text={content}
                           setIsWriting={setIsWriting}
                         />
                       </div>
