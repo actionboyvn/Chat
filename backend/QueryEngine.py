@@ -27,7 +27,7 @@ def num_tokens_from_messages(messages):
     return num_tokens
 
 async def query(conv):
-    messages = []
+    messages = [{"role": "system", "content": "You are a helpful assistant, your name is Baymax."}]
     messages.extend(conv["conversation"])
 
     user_query = messages[-1]["content"]
