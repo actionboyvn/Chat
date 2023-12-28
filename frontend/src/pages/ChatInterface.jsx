@@ -4,7 +4,7 @@ import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
 import { getResponse } from "../utils/Services/getResponse";
 
-const helloMessage = "Hi Gosia!";
+const helloMessage = "Hi there!";
 const writerSpeed = 40;
 
 const ChatInterface = () => {
