@@ -7,10 +7,8 @@ const Login = ({ isLogged, setIsLogged }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username.trim()) {
-      setIsLogged(true);
-      navigate("/");
-    }
+    setIsLogged(true);
+    navigate("/");
   };
 
   return (

@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import {useState} from "react"
 import ChatInterface from "./pages/ChatInterface"
+import Image from "./pages/Image";
+import Home from "./pages/Home";
 import Login from "./components/Login";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -26,11 +28,15 @@ const GuestRoutes = ({ isLogged }) => {
 
 export default function App() {
   const [isLogged, setIsLogged] = useState(false);
+
+
   return (
     <div>
       <Routes>
         <Route element={<LoggedUserRoutes isLogged={isLogged}/>}>
-          <Route element={<ChatInterface/>} path="/"/>
+          <Route element={<ChatInterface/>} path="/chat"/>
+          <Route element={<Image/>} path="/image"/>
+          <Route element={<Home/>} path="/"/>
         </Route>
 
         <Route element={<GuestRoutes isLogin={isLogged} />}>
