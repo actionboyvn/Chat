@@ -2,15 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
-import { getResponse } from "../utils/Services/getResponse";
 
 const helloMessage = "Hi there!";
 const writerSpeed = 40;
 
-const ChatInterface = () => {
+const ChatInterface = ({ socket }) => {
   const [userQuery, setUserQuery] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(0);
   const [isWriting, setIsWriting] = useState(false);
   const textareaRef = useRef(null);
   const scrollableChat = useRef(null);
@@ -67,30 +66,38 @@ const ChatInterface = () => {
         },
       ]);
 
-      setIsLoading(true);
-      setTimeout(() => {
-        getResponse([
+      socket.emit("get_response", [
+        ...messages,
+        {
+          role: "user",
+          content: q || userQuery,
+        },
+      ]);
+
+      setIsLoading(1);
+      socket.on("get_response_option", (result) => {
+        if (result.function === "generate_image") {
+          setIsLoading(2);
+        } else {
+          setIsLoading(1);
+        }
+      });
+
+      socket.on("get_response_callback", (result) => {
+        setIsLoading(0);
+        setMessages([
           ...messages,
           {
             role: "user",
             content: q || userQuery,
           },
-        ]).then((result) => {
-          setIsLoading(false);
-          setMessages([
-            ...messages,
-            {
-              role: "user",
-              content: q || userQuery,
-            },
-            {
-              role: "assistant",
-              func: result.function,
-              content: result.response || result.source,
-            },
-          ]);
-        });
-      }, 2000);
+          {
+            role: "assistant",
+            func: result.function,
+            content: result.response || result.source,
+          },
+        ]);
+      });
 
       setTimeout(() => {
         forceScrollToBottom();
@@ -169,9 +176,13 @@ const ChatInterface = () => {
                       />
                     </div>
                   </div>
-                  {index + 1 === messages.length && isLoading ? (
+                  {index + 1 === messages.length && isLoading > 0 ? (
                     <div className="flex items-center justify-center">
-                      <div className="spinner border-0 border-white border-t-4 border-t-primary-500 w-8 h-8 rounded-full"></div>
+                      {isLoading === 1 ? (
+                        <div className="spinner border-0 border-white border-t-4 border-t-primary-500 w-8 h-8 rounded-full"></div>
+                      ) : (
+                        <div className="spinner border-0 border-white border-t-4 border-t-secondary-500 w-8 h-8 rounded-full"></div>
+                      )}
                     </div>
                   ) : (
                     <div className="message baymax">
@@ -197,7 +208,7 @@ const ChatInterface = () => {
             </div>
           ))}
         </div>
-        <div className="absolute bottom-0 w-full h-[10vh] flex bg-white shadow-[0px_0px_10px_0px_rgba(203,203,203,1)]">
+        <div className="absolute bottom-0 w-full flex bg-white shadow-[0px_0px_10px_0px_rgba(203,203,203,1)]">
           <div className="w-full flex items-center p-6">
             <textarea
               ref={textareaRef}

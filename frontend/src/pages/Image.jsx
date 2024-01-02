@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
-import { getImage } from "../utils/Services/getImage";
-const Image = () => {
+const Image = ({ socket }) => {
   const textareaRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
   const [generatedImageURL, setGeneratedImageURL] = useState("");
@@ -25,7 +24,18 @@ const Image = () => {
   };
 
   const handleQuerySubmit = async (q) => {
-    getImage(q || userQuery).then((result) => {
+    socket.emit(
+      "get_response",
+      [
+        {
+          role: "user",
+          content: q || userQuery,
+        },
+      ],
+      "generate_image"
+    );
+
+    socket.on("get_response_callback", (result) => {
       setGeneratedImageURL(result.source);
     });
   };
@@ -41,31 +51,27 @@ const Image = () => {
           ></img>
         </div>
         <div className="flex flex-col gap-4">
-          <div className="w-full h-14 flex bg-white shadow-[0px_0px_8px_0px_rgba(203,203,203,1)]">
-            <div className="w-full flex items-center p-6 max-md:p-4">
-              <textarea
-                ref={textareaRef}
-                className="flex-1 border-0 outline-none resize-none overflow-hidden"
-                rows={1}
-                name="myInput"
-                placeholder="Send message"
-                value={userQuery}
-                minLength={1}
-                onChange={handleUserQueryChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (e.shiftKey) {
-                      resizeTextarea();
-                    } else {
-                      handleQuerySubmit();
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
+          <textarea
+            ref={textareaRef}
+            className="w-full h-14 flex bg-white items-center p-4 outline-none resize-none overflow-hidden border rounded-md focus:border-secondary-400 focus:ring-1 focus:ring-secondary-400"
+            rows={1}
+            name="myInput"
+            placeholder="Send a prompt"
+            value={userQuery}
+            minLength={1}
+            onChange={handleUserQueryChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (e.shiftKey) {
+                  resizeTextarea();
+                } else {
+                  handleQuerySubmit();
+                }
+              }
+            }}
+          />
           <button
-            className="bg-primary-600 hover:bg-primary-700 cursor-pointer text-white rounded-lg w-20 h-10 text-base max-md:text-sm mx-auto"
+            className="bg-secondary-600 hover:bg-secondary-700 cursor-pointer text-white rounded-lg w-20 h-10 text-base max-md:text-sm mx-auto"
             onClick={() => handleQuerySubmit()}
           >
             Generate

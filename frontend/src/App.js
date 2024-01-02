@@ -1,10 +1,11 @@
 import { Routes, Route } from "react-router-dom";
-import {useState} from "react"
+import {useState, useEffect} from "react"
 import ChatInterface from "./pages/ChatInterface"
 import Image from "./pages/Image";
 import Home from "./pages/Home";
 import Login from "./components/Login";
 import { Navigate, Outlet } from "react-router-dom";
+import io from 'socket.io-client';
 
 const LoggedUserRoutes = ({ isLogged }) => {
   return isLogged === null ? (
@@ -28,14 +29,20 @@ const GuestRoutes = ({ isLogged }) => {
 
 export default function App() {
   const [isLogged, setIsLogged] = useState(false);
+  const [socket, setSocket] = useState(null);
 
+  useEffect(() => {
+    const newSocket = io(process.env.REACT_APP_BACK_END_URL, { transports : ['websocket'] });
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
 
   return (
     <div>
       <Routes>
         <Route element={<LoggedUserRoutes isLogged={isLogged}/>}>
-          <Route element={<ChatInterface/>} path="/chat"/>
-          <Route element={<Image/>} path="/image"/>
+          <Route element={<ChatInterface socket={socket}/>} path="/chat"/>
+          <Route element={<Image socket={socket}/>} path="/image"/>
           <Route element={<Home/>} path="/"/>
         </Route>
 
