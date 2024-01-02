@@ -85,7 +85,8 @@ const ChatInterface = () => {
             },
             {
               role: "assistant",
-              content: result.response,
+              func: result.function,
+              content: result.response || result.source,
             },
           ]);
         });
@@ -154,7 +155,7 @@ const ChatInterface = () => {
               </div>
             </div>
           </div>
-          {messages.map(({ role, content }, index) => (
+          {messages.map(({ role, func, content }, index) => (
             <div key={index}>
               {role === "user" && <div className="message mine">{content}</div>}
               {role === "assistant" && (
@@ -175,11 +176,19 @@ const ChatInterface = () => {
                   ) : (
                     <div className="message baymax">
                       <div>
-                        <Typewriter
-                          delay={writerSpeed}
-                          text={content}
-                          setIsWriting={setIsWriting}
-                        />
+                        {func === "generate_image" ? (
+                          <img
+                            className="w-full h-auto object-contain rounded-xl"
+                            alt="generated"
+                            src={content}
+                          ></img>
+                        ) : (
+                          <Typewriter
+                            delay={writerSpeed}
+                            text={content}
+                            setIsWriting={setIsWriting}
+                          />
+                        )}
                       </div>
                     </div>
                   )}
