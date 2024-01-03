@@ -3,6 +3,7 @@ import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
 import ImageModal from "../components/ImageModal";
+import FetchedInfo from "../components/FetchedInfo";
 
 const helloMessage = "Hi there!";
 const writerSpeed = 20;
@@ -12,6 +13,7 @@ const ChatInterface = ({ socket }) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(0);
   const [isWriting, setIsWriting] = useState(false);
+  const [fetchedGenerationInfo, setFetchedGenerationInfo] = useState("");
   const textareaRef = useRef(null);
   const scrollableChat = useRef(null);
 
@@ -78,10 +80,15 @@ const ChatInterface = ({ socket }) => {
       setIsLoading(1);
       socket.on("get_response_option", (result) => {
         if (result.function === "generate_image") {
+          setFetchedGenerationInfo("");
           setIsLoading(2);
         } else {
           setIsLoading(1);
         }
+      });
+
+      socket.on("get_response_info", (result) => {
+        setFetchedGenerationInfo(result);
       });
 
       socket.on("get_response_callback", (result) => {
@@ -182,7 +189,10 @@ const ChatInterface = ({ socket }) => {
                       {isLoading === 1 ? (
                         <div className="spinner border-0 border-white border-t-4 border-t-primary-500 w-8 h-8 rounded-full"></div>
                       ) : (
-                        <div className="spinner border-0 border-white border-t-4 border-t-secondary-500 w-8 h-8 rounded-full"></div>
+                        <div className="flex gap-2 items-center justify-center bg-white w-fit px-3 py-1.5 rounded-2xl">
+                          <div className="spinner border-0 border-white border-t-4 border-t-secondary-500 w-8 h-8 rounded-full"></div>
+                          <FetchedInfo info={fetchedGenerationInfo} />
+                        </div>
                       )}
                     </div>
                   ) : (

@@ -44,7 +44,7 @@ const ImageModal = ({ src }) => {
       <img
         src={src}
         alt="Generated"
-        className="cursor-pointer h-full object-contain rounded-xl"
+        className="cursor-pointer object-scale-down rounded-xl"
         onClick={toggleModal}
       />
 
@@ -53,14 +53,12 @@ const ImageModal = ({ src }) => {
           className="fixed inset-0 bg-text-color bg-opacity-90 flex justify-center items-center z-10"
           onClick={toggleModal}
         >
-          <div
-            className="flex flex-col justify-center items-end"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex flex-col justify-center items-end">
             <img
               className="object-contain max-h-[90vh]"
               src={src}
               alt="Modal"
+              onClick={(e) => e.stopPropagation()}
             />
             <button
               onClick={handleDownload}
