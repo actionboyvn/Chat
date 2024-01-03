@@ -33,6 +33,7 @@ jobs:
           output_location: "build" # Built app content directory - optional
         env:
           REACT_APP_BACK_END_URL: ${{ secrets.BACK_END_URL }}
+          REACT_APP_PROXY_URL: ${{ secrets.PROXY_URL }}
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
