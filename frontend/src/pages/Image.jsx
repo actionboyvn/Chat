@@ -1,8 +1,11 @@
 import React, { useState, useRef } from "react";
+import ImageModal from "../components/ImageModal";
+import baymax_avatar from "../assets/images/baymax_avatar.jpg";
+
 const Image = ({ socket }) => {
   const textareaRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
-  const [generatedImageURL, setGeneratedImageURL] = useState("");
+  const [generatedImageURL, setGeneratedImageURL] = useState(baymax_avatar);
 
   const resizeTextarea = () => {
     const textarea = textareaRef.current;
@@ -43,12 +46,8 @@ const Image = ({ socket }) => {
   return (
     <div className="bg-white h-lvh w-full flex items-center justify-center">
       <div className="flex flex-col gap-4 w-2/3 max-md:w-5/6">
-        <div className="flex justify-center h-[50vh]">
-          <img
-            className="w-full h-auto object-contain"
-            alt="generated"
-            src={generatedImageURL}
-          ></img>
+        <div className="flex justify-center h-[60vh]">
+          <ImageModal src={generatedImageURL} />
         </div>
         <div className="flex flex-col gap-4">
           <textarea

@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
+import ImageModal from "../components/ImageModal";
 
 const helloMessage = "Hi there!";
-const writerSpeed = 40;
+const writerSpeed = 20;
 
 const ChatInterface = ({ socket }) => {
   const [userQuery, setUserQuery] = useState("");
@@ -188,11 +189,7 @@ const ChatInterface = ({ socket }) => {
                     <div className="message baymax">
                       <div>
                         {func === "generate_image" ? (
-                          <img
-                            className="w-full h-auto object-contain rounded-xl"
-                            alt="generated"
-                            src={content}
-                          ></img>
+                          <ImageModal src={content} />
                         ) : (
                           <Typewriter
                             delay={writerSpeed}
@@ -208,7 +205,7 @@ const ChatInterface = ({ socket }) => {
             </div>
           ))}
         </div>
-        <div className="absolute bottom-0 w-full flex bg-white shadow-[0px_0px_10px_0px_rgba(203,203,203,1)]">
+        <div className="absolute bottom-0 w-full flex bg-white shadow-[0px_0px_10px_0px_rgba(203,203,203,1)] z-0">
           <div className="w-full flex items-center p-6">
             <textarea
               ref={textareaRef}
