@@ -6,9 +6,14 @@ const ImageModal = ({ src }) => {
 
   const handleDownload = async () => {
     setDownloading(true);
-    const imageURL = src;
+    let imageURL;
+    if (/^(https?:)?\/\//.test(src)) {
+      imageURL = process.env.REACT_APP_PROXY_URL + "?url=" + src;
+    } else {
+      imageURL = src;
+    }
     try {
-      const response = await fetch(imageURL, { mode: "no-cors" });
+      const response = await fetch(imageURL);
       if (!response.ok) throw new Error("Network response was not ok");
       const imageBlob = await response.blob();
       const imageObjectURL = URL.createObjectURL(imageBlob);
