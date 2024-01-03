@@ -18,9 +18,12 @@ const ImageModal = ({ src }) => {
       const imageBlob = await response.blob();
       const imageObjectURL = URL.createObjectURL(imageBlob);
 
+      const timestamp = Date.now();
+      const filename = `Generated-${timestamp}.png`;
+
       const link = document.createElement("a");
       link.href = imageObjectURL;
-      link.download = "Generated.png";
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
