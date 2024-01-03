@@ -8,7 +8,7 @@ const ImageModal = ({ src }) => {
     setDownloading(true);
     const imageURL = src;
     try {
-      const response = await fetch(imageURL);
+      const response = await fetch(imageURL, { mode: "no-cors" });
       if (!response.ok) throw new Error("Network response was not ok");
       const imageBlob = await response.blob();
       const imageObjectURL = URL.createObjectURL(imageBlob);
