@@ -4,6 +4,7 @@ import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
 import ImageModal from "../components/ImageModal";
 import FetchedInfo from "../components/FetchedInfo";
+import CustomButton from "../components/CustomButton";
 
 const helloMessage = "Hi there!";
 const writerSpeed = 20;
@@ -135,11 +136,11 @@ const ChatInterface = ({ socket }) => {
       <div className="relative bg-background-color h-full w-full md:w-2/3 lg:w-1/2 mx-auto">
         <div className="flex px-2 h-[10vh] w-full bg-primary-600 text-white">
           <div className="flex items-center">
-            <img
+            <ImageModal
               className="h-12 w-12 bg-background-color-300 rounded-full flex-shrink-0"
-              alt="Avatar"
               src={baymax_avatar}
-            ></img>
+              alt="Avatar"
+            />
             <div className="ml-4">
               <div className="font-bold">Baymax Assistant</div>
               <div className="text-sm">Online</div>
@@ -199,7 +200,7 @@ const ChatInterface = ({ socket }) => {
                     <div className="message baymax">
                       <div>
                         {func === "generate_image" ? (
-                          <ImageModal src={content} />
+                          <ImageModal className="rounded-xl" src={content} />
                         ) : (
                           <Typewriter
                             delay={writerSpeed}
@@ -238,8 +239,9 @@ const ChatInterface = ({ socket }) => {
             />
           </div>
           <div className="flex justify-center items-center w-fit px-2">
-            <button
-              className="bg-primary-600 cursor-pointer text-white rounded-lg w-12"
+            <CustomButton
+              className="text-white rounded-lg w-12"
+              bgColor={"primary"}
               onClick={() => handleQuerySubmit()}
             >
               <svg
@@ -247,7 +249,7 @@ const ChatInterface = ({ socket }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                className="p-4"
+                className="p-4 pointer-events-none"
               >
                 <path
                   strokeLinecap="round"
@@ -256,7 +258,7 @@ const ChatInterface = ({ socket }) => {
                   d="M14 5l7 7m0 0l-7 7m7-7H3"
                 />
               </svg>
-            </button>
+            </CustomButton>
           </div>
         </div>
       </div>

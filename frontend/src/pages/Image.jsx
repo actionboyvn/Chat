@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import ImageModal from "../components/ImageModal";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import FetchedInfo from "../components/FetchedInfo";
+import CustomButton from "../components/CustomButton";
 const Image = ({ socket }) => {
   const textareaRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
@@ -59,7 +60,7 @@ const Image = ({ socket }) => {
           <ImageModal src={generatedImageURL} onLoaded={loadedImageHandle} />
         </div>
         <div
-          className={`h-10 flex gap-2 items-center justify-center bg-background-color bg-opacity-40 w-fit px-3 py-1.5 rounded-md shadow-md ${
+          className={`h-10 flex gap-2 items-center justify-center bg-background-color bg-opacity-40 w-fit px-3 py-1.5 mx-auto rounded-md shadow-md ${
             fetchedGenerationInfo ? "visible" : "invisible"
           }`}
         >
@@ -86,12 +87,13 @@ const Image = ({ socket }) => {
               }
             }}
           />
-          <button
-            className="bg-secondary-600 hover:bg-secondary-700 cursor-pointer text-white rounded-lg w-20 h-10 text-base max-md:text-sm mx-auto"
+          <CustomButton
+            className="cursor-pointer text-white rounded-lg w-28 h-10 text-base max-md:text-sm mx-auto"
+            bgColor="secondary"
             onClick={() => handleQuerySubmit()}
           >
-            Generate
-          </button>
+            <p>Generate</p>
+          </CustomButton>
         </div>
       </div>
     </div>

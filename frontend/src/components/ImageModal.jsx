@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const ImageModal = ({ src, onLoaded }) => {
+const ImageModal = ({ className, src, onLoaded }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
@@ -50,7 +50,7 @@ const ImageModal = ({ src, onLoaded }) => {
       <img
         src={src}
         alt="Generated"
-        className="cursor-pointer object-scale-down rounded-xl"
+        className={`${className} object-scale-down`}
         onClick={toggleModal}
       />
 
@@ -59,12 +59,14 @@ const ImageModal = ({ src, onLoaded }) => {
           className="fixed inset-0 bg-text-color bg-opacity-90 flex justify-center items-center z-10"
           onClick={toggleModal}
         >
-          <div className="flex flex-col justify-center items-end">
+          <div
+            className="flex flex-col justify-center items-end"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               className="object-contain max-h-[90vh]"
               src={src}
               alt="Modal"
-              onClick={(e) => e.stopPropagation()}
             />
             <button
               onClick={handleDownload}
