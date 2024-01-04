@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const ImageModal = ({ src }) => {
+const ImageModal = ({ src, onLoaded }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
@@ -38,6 +38,12 @@ const ImageModal = ({ src }) => {
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (onLoaded) {
+      onLoaded();
+    } // eslint-disable-next-line
+  }, [src]);
 
   return (
     <>

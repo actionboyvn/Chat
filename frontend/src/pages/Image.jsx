@@ -1,11 +1,20 @@
 import React, { useState, useRef } from "react";
 import ImageModal from "../components/ImageModal";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
-
+import FetchedInfo from "../components/FetchedInfo";
 const Image = ({ socket }) => {
   const textareaRef = useRef(null);
   const [userQuery, setUserQuery] = useState("");
   const [generatedImageURL, setGeneratedImageURL] = useState(baymax_avatar);
+  const [fetchedGenerationInfo, setFetchedGenerationInfo] = useState(null);
+
+  socket.on("get_response_info", (result) => {
+    setFetchedGenerationInfo(result);
+  });
+
+  const loadedImageHandle = () => {
+    setFetchedGenerationInfo(null);
+  };
 
   const resizeTextarea = () => {
     const textarea = textareaRef.current;
@@ -47,7 +56,15 @@ const Image = ({ socket }) => {
     <div className="bg-white h-lvh w-full flex items-center justify-center">
       <div className="flex flex-col gap-4 w-2/3 max-md:w-5/6">
         <div className="flex justify-center h-[60vh]">
-          <ImageModal src={generatedImageURL} />
+          <ImageModal src={generatedImageURL} onLoaded={loadedImageHandle} />
+        </div>
+        <div
+          className={`h-10 flex gap-2 items-center justify-center bg-background-color bg-opacity-40 w-fit px-3 py-1.5 rounded-md shadow-md ${
+            fetchedGenerationInfo ? "visible" : "invisible"
+          }`}
+        >
+          <div className="spinner border-2 border-background-color border-opacity-100 border-t-2 border-t-secondary-600 w-6 h-6 rounded-full"></div>
+          <FetchedInfo info={fetchedGenerationInfo} />
         </div>
         <div className="flex flex-col gap-4">
           <textarea
