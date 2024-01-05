@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import baymax_transparent from "../assets/images/baymax_transparent.png";
 import Typewriter from "../components/Typewriter";
@@ -12,7 +12,7 @@ const writerSpeed = 20;
 const ChatInterface = ({ socket }) => {
   const [userQuery, setUserQuery] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(0);
+  const [isLoading, setIsLoading] = useState(null);
   const [isWriting, setIsWriting] = useState(false);
   const [fetchedGenerationInfo, setFetchedGenerationInfo] = useState("");
   const textareaRef = useRef(null);
@@ -39,14 +39,6 @@ const ChatInterface = ({ socket }) => {
     }
   };
 
-  const handleUserQueryChange = (e) => {
-    if (e.target.value.slice(-1) === "\n" && e.target.value.length === 1) {
-      return;
-    }
-    setUserQuery(e.target.value);
-    resizeTextarea();
-  };
-
   const resizeTextarea = () => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -55,64 +47,12 @@ const ChatInterface = ({ socket }) => {
     }
   };
 
-  const handleQuerySubmit = async (q) => {
-    setUserQuery("");
-    if (q || userQuery) {
-      setMessages([
-        ...messages,
-        {
-          role: "user",
-          content: q || userQuery,
-        },
-        {
-          role: "assistant",
-          content: "",
-        },
-      ]);
-
-      socket.emit("get_response", [
-        ...messages,
-        {
-          role: "user",
-          content: q || userQuery,
-        },
-      ]);
-
-      setIsLoading(1);
-      socket.on("get_response_option", (result) => {
-        if (result.function === "generate_image") {
-          setFetchedGenerationInfo("");
-          setIsLoading(2);
-        } else {
-          setIsLoading(1);
-        }
-      });
-
-      socket.on("get_response_info", (result) => {
-        setFetchedGenerationInfo(result);
-      });
-
-      socket.on("get_response_callback", (result) => {
-        setIsLoading(0);
-        setMessages([
-          ...messages,
-          {
-            role: "user",
-            content: q || userQuery,
-          },
-          {
-            role: "assistant",
-            func: result.function,
-            content: result.response || result.source,
-          },
-        ]);
-      });
-
-      setTimeout(() => {
-        forceScrollToBottom();
-        resizeTextarea();
-      }, 10);
+  const handleUserQueryChange = (e) => {
+    if (e.target.value.slice(-1) === "\n" && e.target.value.length === 1) {
+      return;
     }
+    setUserQuery(e.target.value);
+    resizeTextarea();
   };
 
   useEffect(() => {
@@ -130,6 +70,73 @@ const ChatInterface = ({ socket }) => {
       }
     }
   }, [isWriting]);
+
+  useEffect(() => {
+    const handleResponseOption = (result) => {
+      if (result.function === "generate_image") {
+        setFetchedGenerationInfo("");
+        setIsLoading("image");
+      }
+    };
+
+    const handleResponseInfo = (result) => {
+      setFetchedGenerationInfo(result);
+    };
+
+    const handleResponseCallback = (result) => {
+      setIsLoading(null);
+      setMessages((currentMessages) => [
+        ...currentMessages.slice(0, -1),
+        {
+          role: "assistant",
+          func: result.function,
+          content: result.response || result.source,
+        },
+      ]);
+    };
+
+    socket.on("get_response_option", handleResponseOption);
+    socket.on("get_response_info", handleResponseInfo);
+    socket.on("get_response_callback", handleResponseCallback);
+
+    return () => {
+      socket.off("get_response_option", handleResponseOption);
+      socket.off("get_response_info", handleResponseInfo);
+      socket.off("get_response_callback", handleResponseCallback);
+    };
+  }, [socket, userQuery]);
+
+  const handleQuerySubmit = useCallback(
+    async (q) => {
+      const finalQuery = q || userQuery;
+      if (!finalQuery) return;
+
+      setUserQuery("");
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          role: "user",
+          content: q || userQuery,
+        },
+        {
+          role: "assistant",
+          content: "Pending",
+        },
+      ]);
+
+      socket.emit("get_response", [
+        ...messages,
+        { role: "user", content: finalQuery },
+      ]);
+      setIsLoading("text");
+
+      setTimeout(() => {
+        forceScrollToBottom();
+        resizeTextarea();
+      }, 10);
+    },
+    [userQuery, messages, socket]
+  );
 
   return (
     <div className="bg-white h-lvh">
@@ -185,15 +192,15 @@ const ChatInterface = ({ socket }) => {
                       />
                     </div>
                   </div>
-                  {index + 1 === messages.length && isLoading > 0 ? (
+                  {index + 1 === messages.length && isLoading ? (
                     <div className="flex items-center justify-center">
-                      {isLoading === 1 ? (
-                        <div className="spinner border-0 border-white border-t-4 border-t-primary-500 w-8 h-8 rounded-full"></div>
-                      ) : (
+                      {isLoading === "image" ? (
                         <div className="flex gap-2 items-center justify-center bg-white w-fit px-3 py-1.5 rounded-2xl">
                           <div className="spinner border-0 border-white border-t-4 border-t-secondary-500 w-8 h-8 rounded-full"></div>
                           <FetchedInfo info={fetchedGenerationInfo} />
                         </div>
+                      ) : (
+                        <div className="spinner border-0 border-white border-t-4 border-t-primary-500 w-8 h-8 rounded-full"></div>
                       )}
                     </div>
                   ) : (
@@ -240,7 +247,7 @@ const ChatInterface = ({ socket }) => {
           </div>
           <div className="flex justify-center items-center w-fit px-2">
             <CustomButton
-              className="text-white rounded-lg w-12"
+              className="text-white rounded-lg w-12 h-12"
               bgColor={"primary"}
               onClick={() => handleQuerySubmit()}
             >

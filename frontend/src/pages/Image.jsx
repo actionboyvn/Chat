@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ImageModal from "../components/ImageModal";
 import baymax_avatar from "../assets/images/baymax_avatar.jpg";
 import FetchedInfo from "../components/FetchedInfo";
@@ -8,10 +8,6 @@ const Image = ({ socket }) => {
   const [userQuery, setUserQuery] = useState("");
   const [generatedImageURL, setGeneratedImageURL] = useState(baymax_avatar);
   const [fetchedGenerationInfo, setFetchedGenerationInfo] = useState(null);
-
-  socket.on("get_response_info", (result) => {
-    setFetchedGenerationInfo(result);
-  });
 
   const loadedImageHandle = () => {
     setFetchedGenerationInfo(null);
@@ -47,11 +43,25 @@ const Image = ({ socket }) => {
       ],
       "generate_image"
     );
-
-    socket.on("get_response_callback", (result) => {
-      setGeneratedImageURL(result.source);
-    });
   };
+
+  useEffect(() => {
+    const getResponseInfo = (result) => {
+      setFetchedGenerationInfo(result);
+    };
+
+    const getResponseCallback = (result) => {
+      setGeneratedImageURL(result.source);
+    };
+
+    socket.on("get_response_info", getResponseInfo);
+    socket.on("get_response_callback", getResponseCallback);
+
+    return () => {
+      socket.off("get_response_info", getResponseInfo);
+      socket.off("get_response_callback", getResponseCallback);
+    };
+  }, [socket]);
 
   return (
     <div className="bg-white h-lvh w-full flex items-center justify-center">

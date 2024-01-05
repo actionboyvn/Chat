@@ -4,7 +4,13 @@ const CustomButton = ({ className, bgColor, onClick, children }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const buttonClass = `${className} ${
-    isPressed ? `bg-${bgColor}-600` : `bg-${bgColor}-500`
+    isPressed
+      ? bgColor === "primary"
+        ? "bg-primary-700"
+        : "bg-secondary-700"
+      : bgColor === "primary"
+      ? "bg-primary-600"
+      : "bg-secondary-600"
   } focus:outline-none`;
 
   const handlePress = () => setIsPressed(true);

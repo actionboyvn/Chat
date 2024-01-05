@@ -6,12 +6,15 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import { Navigate, Outlet } from "react-router-dom";
 import io from 'socket.io-client';
+import SwipeableRoutes from "./components/SwipeableRoutes"
 
 const LoggedUserRoutes = ({ isLogged }) => {
   return isLogged === null ? (
     <Outlet />
   ) : isLogged ? (
-    <Outlet />
+    <SwipeableRoutes>
+      <Outlet />
+    </SwipeableRoutes>
   ) : (
     <Navigate to="/login" />
   );
@@ -39,7 +42,7 @@ export default function App() {
 
   return (
     <div>
-      <Routes>
+       <Routes>
         <Route element={<LoggedUserRoutes isLogged={isLogged}/>}>
           <Route element={<ChatInterface socket={socket}/>} path="/chat"/>
           <Route element={<Image socket={socket}/>} path="/image"/>
