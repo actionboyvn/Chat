@@ -27,12 +27,12 @@ jobs:
         run: pip install -r backend/requirements.txt
 
       - name: Set environment variables
-        env:
-          OPENAI_API_TYPE: ${{ secrets.OPENAI_API_TYPE }}
-          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
-          OPENAI_API_BASE: ${{ secrets.OPENAI_API_BASE }}
-          OPENAI_API_DEPLOYMENT: ${{ secrets.OPENAI_API_DEPLOYMENT }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "OPENAI_API_TYPE=${{ secrets.OPENAI_API_TYPE }}" >> .env
+          echo "OPENAI_API_VERSION=${{ secrets.OPENAI_API_VERSION }}" >> .env
+          echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> .env
+          echo "OPENAI_API_DEPLOYMENT=${{ secrets.OPENAI_API_DEPLOYMENT }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
 
       - name: Zip artifact for deployment
         run: zip release.zip backend/* -r
