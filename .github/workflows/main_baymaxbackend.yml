@@ -26,13 +26,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r backend/requirements.txt
 
-      env:
-        OPENAI_API_TYPE: ${{ secrets.OPENAI_API_TYPE }}
-        OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
-        OPENAI_API_BASE: ${{ secrets.OPENAI_API_BASE }}
-        OPENAI_API_DEPLOYMENT: ${{ secrets.OPENAI_API_DEPLOYMENT }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      - name: Set environment variables
+        env:
+          OPENAI_API_TYPE: ${{ secrets.OPENAI_API_TYPE }}
+          OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+          OPENAI_API_BASE: ${{ secrets.OPENAI_API_BASE }}
+          OPENAI_API_DEPLOYMENT: ${{ secrets.OPENAI_API_DEPLOYMENT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Zip artifact for deployment
         run: zip release.zip backend/* -r
