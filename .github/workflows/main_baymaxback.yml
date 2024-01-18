@@ -27,7 +27,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "OPENAI_API_TYPE=${{ secrets.OPENAI_API_TYPE }}" >> backend/.env
+          echo "OPENAI_API_TYPE=${{ secrets.OPENAI_API_TYPE }}" > backend/.env
           echo "OPENAI_API_VERSION=${{ secrets.OPENAI_API_VERSION }}" >> backend/.env
           echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> backend/.env
           echo "OPENAI_API_DEPLOYMENT=${{ secrets.OPENAI_API_DEPLOYMENT }}" >> backend/.env
@@ -36,7 +36,7 @@ jobs:
       - name: Zip artifact for deployment
         run: |
           cd backend
-          zip release.zip ./* -r -x "*.env"
+          zip release.zip ./* -r
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
