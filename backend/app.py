@@ -32,4 +32,4 @@ async def get_response(sid, conversation, func_sig=None):
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run('main:app', host="0.0.0.0", port=8001)
+    uvicorn.run('app:app', host="0.0.0.0", port=8001)
