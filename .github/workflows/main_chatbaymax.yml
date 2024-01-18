@@ -32,8 +32,8 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          cd frontend
-          zip -r release.zip build/*
+          cd frontend/build
+          zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
