@@ -34,7 +34,9 @@ jobs:
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip .
+        run: |
+          cd backend
+          zip -r release.zip .
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
