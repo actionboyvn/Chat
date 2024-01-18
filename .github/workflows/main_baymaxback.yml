@@ -18,24 +18,23 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Create and start virtual environment
+      - name: Install dependencies
         run: |
+          cd backend
           python -m venv venv
           source venv/bin/activate
-
-      - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+          pip install -r requirements.txt
 
       - name: Set environment variables
         run: |
-          echo "OPENAI_API_TYPE=${{ secrets.OPENAI_API_TYPE }}" >> backend/.env
-          echo "OPENAI_API_VERSION=${{ secrets.OPENAI_API_VERSION }}" >> backend/.env
-          echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> backend/.env
-          echo "OPENAI_API_DEPLOYMENT=${{ secrets.OPENAI_API_DEPLOYMENT }}" >> backend/.env
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> backend/.env
+          echo "OPENAI_API_TYPE=${{ secrets.OPENAI_API_TYPE }}" >> .env
+          echo "OPENAI_API_VERSION=${{ secrets.OPENAI_API_VERSION }}" >> .env
+          echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> .env
+          echo "OPENAI_API_DEPLOYMENT=${{ secrets.OPENAI_API_DEPLOYMENT }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip backend/*
+        run: zip -r release.zip .
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
@@ -59,7 +58,7 @@ jobs:
           name: python-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip -o release.zip -d ./deploy
 
       - name: Print Artifact Contents
         run: ls -R
