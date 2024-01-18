@@ -59,6 +59,10 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
+      - name: Activate virtual environment
+        shell: bash
+        run: source venv/bin/activate
+
       - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
