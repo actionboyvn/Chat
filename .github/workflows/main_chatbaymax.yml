@@ -28,6 +28,10 @@ jobs:
         run: |
           cd frontend
           npm install
+
+          echo "REACT_APP_BACK_END_URL=${{ secrets.BACK_END_URL }}" > .env
+          echo "REACT_APP_PROXY_URL=${{ secrets.PROXY_URL }}" >> .env
+
           npm run build
 
       - name: Zip artifact for deployment
@@ -65,8 +69,3 @@ jobs:
           slot-name: "Production"
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0A470F0D2DC84E1D9819125B20D525BE }}
-
-      - name: Set up environment variables
-        run: |
-          echo "REACT_APP_BACK_END_URL=${{ secrets.BACK_END_URL }}" >> $GITHUB_ENV
-          echo "REACT_APP_PROXY_URL=${{ secrets.PROXY_URL }}" >> $GITHUB_ENV
