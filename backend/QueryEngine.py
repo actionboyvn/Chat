@@ -2,6 +2,8 @@ import tiktoken
 import openai
 from dotenv import load_dotenv
 import os
+import chromadb
+from chromadb.utils import embedding_functions
 
 load_dotenv()
 
@@ -9,6 +11,12 @@ openai.api_type = os.getenv("OPENAI_API_TYPE")
 openai.api_version = os.getenv("OPENAI_API_VERSION")
 openai.api_base = os.getenv("OPENAI_API_BASE")
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+EMBEDDING_MODEL = 'sentence-transformers/msmarco-distilbert-base-v4'
+PERSIST_DIRECTORY = 'VectorDB'
+chroma_emb_func = embedding_functions.SentenceTransformerEmbeddingFunction(model_name=EMBEDDING_MODEL)
+client = chromadb.PersistentClient(path=PERSIST_DIRECTORY)
+client.heartbeat()
 
 max_response_tokens = 1000
 token_limit = 4096
